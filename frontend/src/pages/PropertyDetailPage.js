@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import "./PropertyDetailPage.css";
 import usePropertyDetails from "../hooks/usePropertyDetails";
 import {
   parsePropertyPhotos,
@@ -56,152 +57,193 @@ function PropertyDetailPage() {
   const longitude = property.LMD_MP_Longitude;
 
   return (
-    <div>
-      <Link to="/">← Back to Listings</Link>
+    <div className="property-detail-page">
+      <Link className="back-link" to="/">
+        ← Back to Listings
+      </Link>
 
       {photos.length > 0 && (
-        <div>
+        <div className="property-gallery">
           <img
+            className="main-property-photo"
             src={photos[currentPhotoIndex]}
             alt={property.L_Address || "Property"}
             onClick={() => setLightboxOpen(true)}
-            style={{
-              width: "100%",
-              maxWidth: "800px",
-              height: "450px",
-              objectFit: "cover",
-              cursor: "pointer",
-            }}
           />
 
-          <div
-            style={{
-              display: "flex",
-              gap: "8px",
-              overflowX: "auto",
-              maxWidth: "800px",
-              marginTop: "8px",
-            }}
-          >
+          <div className="thumbnail-row">
             {photos.map((photo, index) => (
               <img
                 key={index}
+                className={`property-thumbnail ${
+                  index === currentPhotoIndex ? "active" : ""
+                }`}
                 src={photo}
                 alt={`Property ${index + 1}`}
                 onClick={() => setCurrentPhotoIndex(index)}
-                style={{
-                  width: "100px",
-                  height: "70px",
-                  objectFit: "cover",
-                  cursor: "pointer",
-                }}
               />
             ))}
           </div>
         </div>
       )}
 
-    <h1>{property.L_Address}</h1>
+    <div className="property-summary">
+      <div className="property-price">
+        ${Number(property.L_SystemPrice).toLocaleString()}
+      </div>
 
-    <h2>${Number(property.L_SystemPrice).toLocaleString()}</h2>
+      <h1 className="property-address">{property.L_Address}</h1>
 
-    <p>
-      {property.L_City}, {property.L_State} {property.L_Zip}
-    </p>
+      <div className="property-location">
+        {property.L_City}, {property.L_State} {property.L_Zip}
+      </div>
 
-    <p>
-      {property.L_Keyword2 ?? "N/A"} beds ·{" "}
-      {property.LM_Dec_3 ?? "N/A"} baths ·{" "}
-      {property.LM_Int2_3
-        ? `${Number(property.LM_Int2_3).toLocaleString()} sqft`
-        : "N/A sqft"}
-    </p>
+      <div className="property-stats">
+        <div>
+          <strong>{property.L_Keyword2 ?? "N/A"}</strong>
+          <span>Beds</span>
+        </div>
 
-    <h2>Description</h2>
-    <p>{property.L_Remarks || "No description available."}</p>
+        <div>
+          <strong>{property.LM_Dec_3 ?? "N/A"}</strong>
+          <span>Baths</span>
+        </div>
 
-    <h2>Property Details</h2>
+        <div>
+          <strong>
+            {property.LM_Int2_3
+              ? Number(property.LM_Int2_3).toLocaleString()
+              : "N/A"}
+          </strong>
+          <span>Sq Ft</span>
+        </div>
+      </div>
+    </div>
 
-    <p>Property Type: {property.L_Type_ || "N/A"}</p>
-    <p>Year Built: {property.YearBuilt || "N/A"}</p>
-    <p>Stories: {property.StoriesTotal || "N/A"}</p>
+    <section className="detail-section">
+      <h2>Description</h2>
 
-    <p>
-      Lot Size:{" "}
-      {property.LotSizeAcres
-        ? `${property.LotSizeAcres} acres`
-        : "N/A"}
-    </p>
+      <p className="property-description">
+        {property.L_Remarks || "No description available."}
+      </p>
+    </section>
 
-    <p>Status: {property.L_Status || "N/A"}</p>
+    <section className="detail-section">
+      <h2>Property Details</h2>
+
+      <div className="details-grid">
+        <div className="detail-item">
+          <span className="detail-label">Property Type</span>
+          <span className="detail-value">
+            {property.L_Type_ || "N/A"}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <span className="detail-label">Year Built</span>
+          <span className="detail-value">
+            {property.YearBuilt || "N/A"}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <span className="detail-label">Stories</span>
+          <span className="detail-value">
+            {property.StoriesTotal || "N/A"}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <span className="detail-label">Lot Size</span>
+          <span className="detail-value">
+            {property.LotSizeAcres
+              ? `${property.LotSizeAcres} acres`
+              : "N/A"}
+          </span>
+        </div>
+
+        <div className="detail-item">
+          <span className="detail-label">Status</span>
+          <span className="detail-value">
+            {property.L_Status || "N/A"}
+          </span>
+        </div>
+      </div>
+    </section>
 
     {latitude && longitude && (
-      <div>
-        <h2>Location</h2>
+      <section className="detail-section location-section">
+        <div className="location-header">
+          <h2>Location</h2>
 
-        <iframe
-          title="Property location"
-          width="800"
-          height="400"
-          style={{ border: 0, maxWidth: "100%" }}
-          loading="lazy"
-          allowFullScreen
-          src={`https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`}
-        />
-
-        <p>
           <a
+            className="directions-link"
             href={`https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`}
             target="_blank"
             rel="noopener noreferrer"
           >
-            Get Directions
+            Get Directions ↗
           </a>
-        </p>
-      </div>
+        </div>
+
+        <div className="map-container">
+          <iframe
+            title="Property location"
+            loading="lazy"
+            allowFullScreen
+            src={`https://www.google.com/maps?q=${latitude},${longitude}&z=15&output=embed`}
+          />
+        </div>
+      </section>
     )}
 
-    <h2>Open Houses</h2>
+    <section className="detail-section open-house-section">
+      <h2>Open Houses</h2>
 
-    {openHouses.length > 0 ? (
-      openHouses.map((openHouse, index) => {
-        const remarks = parseOpenHouseRemarks(openHouse.all_data);
+      {openHouses.length > 0 ? (
+        <div className="open-house-list">
+          {openHouses.map((openHouse, index) => {
+            const remarks = parseOpenHouseRemarks(openHouse.all_data);
 
-        return (
-          <div key={index}>
-            <p>
-              {new Date(openHouse.OpenHouseDate).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
+            return (
+              <div className="open-house-card" key={index}>
+                <div className="open-house-date">
+                  {new Date(openHouse.OpenHouseDate).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </div>
 
-            <p>
-              {new Date(`1970-01-01T${openHouse.OH_StartTime}`).toLocaleTimeString(
-                "en-US",
-                {
-                  hour: "numeric",
-                  minute: "2-digit",
-                }
-              )}
-              {" - "}
-              {new Date(`1970-01-01T${openHouse.OH_EndTime}`).toLocaleTimeString(
-                "en-US",
-                {
-                  hour: "numeric",
-                  minute: "2-digit",
-                }
-              )}
-            </p>
-            
-            {remarks && <p>{remarks}</p>}
-          </div>
-        );
-      })
-    ) : (
-      <p>No open houses scheduled</p>
-    )}
+                <div className="open-house-time">
+                  {new Date(
+                    `1970-01-01T${openHouse.OH_StartTime}`
+                  ).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                  {" – "}
+                  {new Date(
+                    `1970-01-01T${openHouse.OH_EndTime}`
+                  ).toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                </div>
+
+                {remarks && (
+                  <p className="open-house-remarks">{remarks}</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="no-open-house">
+          No open houses currently scheduled.
+        </div>
+      )}
+    </section>
 
     {lightboxOpen && (
       <div
